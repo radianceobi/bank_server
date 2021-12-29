@@ -17,10 +17,12 @@ const transfer = asyncHandler(async (req, res, next) => {
   const { email } = req.user;
 
   const remain = await sendMoney(email, to, amount);
+  //update user
 
-  res
-    .status(200)
-    .json({ transactions: await getTransactions(email), balance: remain });
+  res.status(200).json({
+    transactions: await getTransactions(email),
+    updatedUserDetail: await UpdateUserDetail({ balance: remain }, email),
+  });
 });
 
 const getTransac = asyncHandler(async (req, res, next) => {
@@ -31,7 +33,7 @@ const getTransac = asyncHandler(async (req, res, next) => {
 const alter = asyncHandler(async (req, res, next) => {
   const { email } = req.body;
 
-  await UpdateUserDetail({ ...req.body }, email);
+  res.status(200).json(await UpdateUserDetail({ ...req.body }, email));
 });
 module.exports = {
   getBanks,

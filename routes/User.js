@@ -22,8 +22,8 @@ user
 user.route("/verify-email").get(verify);
 
 user.route("/gen-otp").get(protect, getOTP);
-user.route("/sendMoney").post(protect, transfer);
+user.route("/send-money").post(protect, transfer);
 user.route("/transactions").get(protect, getTransac);
 
-user.route("alter-user").patch(alter);
+user.route("/alter-user").patch(alter);
 module.exports = user;

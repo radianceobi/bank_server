@@ -3,9 +3,8 @@ const Transaction = (sequelize, DataTypes) =>
   sequelize.define("Transactions", {
     transaction_id: {
       type: DataTypes.STRING(255),
-      allowNull: false,
-      defaultValue: v1(),
-      unique: true,
+
+      primaryKey: true,
     },
     reciever: {
       type: DataTypes.INTEGER,

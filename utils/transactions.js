@@ -1,4 +1,5 @@
 const { Op } = require("sequelize");
+const { v1, v4 } = require("uuid");
 const { Users, Transactions } = require("../models");
 
 const sendMoney = async (from, to, amount) => {
@@ -18,6 +19,7 @@ const sendMoney = async (from, to, amount) => {
       from,
       to,
       amount,
+      transaction_id: v4() + "_" + Date.now(),
     });
     //update user balance
 
@@ -40,12 +42,19 @@ const changeBalance = async (email, balance) => {
 
 //gen transaction history
 
-const genTransactionHistory = async ({ from, to, date, amount }) => {
+const genTransactionHistory = async ({
+  from,
+  to,
+  date,
+  amount,
+  transaction_id,
+}) => {
   await Transactions.create({
     reciever: to,
     sender: from,
     date,
     amount,
+    transaction_id,
   });
   return true;
 };
@@ -55,6 +64,7 @@ const getTransactions = async (email) => {
     where: {
       [Op.or]: [{ sender: email }, { reciever: email }],
     },
+    order: [["date", "desc"]],
   });
 };
 module.exports = {
