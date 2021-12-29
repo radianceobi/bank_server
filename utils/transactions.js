@@ -1,6 +1,7 @@
-const { Users } = require("../models");
+const { Op } = require("sequelize");
+const { Users, Transactions } = require("../models");
 
-const sendMoney = async (from, to = "A user", amount) => {
+const sendMoney = async (from, to, amount) => {
   const { balance } = await Users.findOne({ where: { email: from } });
   if (Number(amount) < Number(balance)) {
     const remain = Number(balance) - Number(amount);
@@ -12,6 +13,14 @@ const sendMoney = async (from, to = "A user", amount) => {
         },
       }
     );
+
+    await genTransactionHistory({
+      from,
+      to,
+      amount,
+    });
+    //update user balance
+
     return remain;
   }
   throw "Transaction could not be completed, Insufficient balance";
@@ -31,8 +40,26 @@ const changeBalance = async (email, balance) => {
 
 //gen transaction history
 
-const genTransactionHistory = () => {};
+const genTransactionHistory = async ({ from, to, date, amount }) => {
+  await Transactions.create({
+    reciever: to,
+    sender: from,
+    date,
+    amount,
+  });
+  return true;
+};
+
+const getTransactions = async (email) => {
+  return await Transactions.findAll({
+    where: {
+      [Op.or]: [{ sender: email }, { reciever: email }],
+    },
+  });
+};
 module.exports = {
   changeBalance,
   sendMoney,
+  getTransactions,
+  genTransactionHistory,
 };

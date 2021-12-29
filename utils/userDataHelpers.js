@@ -46,7 +46,7 @@ const passwordCheck = async (string, user_id) => {
 const UpdateUserDetail = async (data, user_id) => {
   await Users.update(data, {
     where: {
-      user_id,
+      [Op.or]: [{ user_id }, { email: user_id }],
     },
   });
   return await getUserData(user_id);

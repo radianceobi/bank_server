@@ -7,7 +7,7 @@ const Transaction = (sequelize, DataTypes) =>
       defaultValue: v1(),
       unique: true,
     },
-    receiver: {
+    reciever: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
@@ -22,10 +22,7 @@ const Transaction = (sequelize, DataTypes) =>
     date: {
       type: DataTypes.STRING,
       allowNull: false,
-    },
-    type: {
-      type: DataTypes.ENUM("CREDIT", "DEBIT"),
-      defaultValue: "DEBIT",
+      defaultValue: new Date().toUTCString(),
     },
   });
 module.exports = Transaction;

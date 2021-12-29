@@ -1,5 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const { getBankList, resolveName } = require("../../utils/paystack");
+const { sendMoney, getTransactions } = require("../../utils/transactions");
+const { UpdateUserDetail } = require("../../utils/userDataHelpers");
 
 const getBanks = asyncHandler(async (req, res, next) => {
   res.send(await getBankList());
@@ -10,7 +12,31 @@ const resolveAccount = asyncHandler(async (req, res, next) => {
   res.send(await resolveName(body.account_number, body.bank_code));
 });
 
+const transfer = asyncHandler(async (req, res, next) => {
+  const { to, amount } = req.body;
+  const { email } = req.user;
+
+  const remain = await sendMoney(email, to, amount);
+
+  res
+    .status(200)
+    .json({ transactions: await getTransactions(email), balance: remain });
+});
+
+const getTransac = asyncHandler(async (req, res, next) => {
+  res.status(200).json(await getTransactions(req.user.email));
+});
+//increase balance
+
+const increaseBal = asyncHandler(async (req, res, next) => {
+  const { email, amount } = req.body;
+
+  await UpdateUserDetail({ balance: amount }, email);
+});
 module.exports = {
   getBanks,
   resolveAccount,
+  transfer,
+  increaseBal,
+  getTransac,
 };
