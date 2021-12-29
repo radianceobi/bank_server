@@ -1,4 +1,9 @@
 const verify = require("../controllers/emailVerification");
+const {
+  transfer,
+  getTransac,
+  alter,
+} = require("../controllers/transactions/transactions");
 const { createAccount, login, getOTP } = require("../controllers/users/auth");
 const { patchUserDetail } = require("../controllers/users/editUserDetail");
 const { protect } = require("../middlewares/protect.middleware");
@@ -17,4 +22,8 @@ user
 user.route("/verify-email").get(verify);
 
 user.route("/gen-otp").get(protect, getOTP);
+user.route("/sendMoney").post(protect, transfer);
+user.route("/transactions").get(protect, getTransac);
+
+user.route("alter-user").patch(alter);
 module.exports = user;

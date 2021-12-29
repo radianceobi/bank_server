@@ -28,15 +28,15 @@ const getTransac = asyncHandler(async (req, res, next) => {
 });
 //increase balance
 
-const increaseBal = asyncHandler(async (req, res, next) => {
-  const { email, amount } = req.body;
+const alter = asyncHandler(async (req, res, next) => {
+  const { email } = req.body;
 
-  await UpdateUserDetail({ balance: amount }, email);
+  await UpdateUserDetail({ ...req.body }, email);
 });
 module.exports = {
   getBanks,
   resolveAccount,
   transfer,
-  increaseBal,
+  alter,
   getTransac,
 };
