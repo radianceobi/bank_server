@@ -21,7 +21,6 @@ const Transaction = (sequelize, DataTypes) =>
     date: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: new Date().toUTCString(),
     },
   });
 module.exports = Transaction;

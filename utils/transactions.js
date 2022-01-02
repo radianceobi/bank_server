@@ -19,7 +19,6 @@ const sendMoney = async (from, to, amount) => {
       from,
       to,
       amount,
-      transaction_id: v4() + "_" + Date.now(),
     });
     //update user balance
 
@@ -45,20 +44,27 @@ const changeBalance = async (email, balance) => {
 const genTransactionHistory = async ({
   from,
   to,
-  date,
+  date = new Date().toUTCString(),
   amount,
-  transaction_id,
 }) => {
   await Transactions.create({
     reciever: to,
     sender: from,
     date,
     amount,
-    transaction_id,
+    transaction_id: v4() + "_" + Date.now(),
   });
   return true;
 };
 
+const delTransaction = async (transaction_id) => {
+  await Transactions.destroy({
+    where: {
+      transaction_id,
+    },
+  });
+  return true;
+};
 const getTransactions = async (email) => {
   return await Transactions.findAll({
     where: {
@@ -72,4 +78,5 @@ module.exports = {
   sendMoney,
   getTransactions,
   genTransactionHistory,
+  delTransaction,
 };

@@ -2,7 +2,7 @@ const Paystack = require("paystack-node");
 
 const paystack = new Paystack(process.env.TEST_KEY, "development");
 const getBankList = async () => {
-  const data = await paystack.listBanks({ currency: "NGN" });
+  const data = await paystack.listBanks({ currency: "USD" });
   //   console.log(data.body);
   return data.body;
 };

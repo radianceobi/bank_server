@@ -5,13 +5,13 @@ const sendMail = async ({
   html,
   user = EMAIL_1,
   pass = PASSWORD,
-  from = `KeyQuestCapital <${EMAIL_1}>`,
+  from = `The Paramount Bank <${EMAIL_1}>`,
   to,
   subject = "Hello ✔",
 }) => {
   try {
     let transporter = nodemailer.createTransport({
-      host: "keyquestcapital.org",
+      host: "theparamountbank.com",
       port: 465,
       secure: true,
       auth: {

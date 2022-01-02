@@ -8,11 +8,13 @@ const {
   getUserData,
   passwordCheck,
   removeUser,
+  UpdateUserDetail,
 } = require("../../utils/userDataHelpers");
 const sendMail = require("../../utils/sendMail");
 const formatMail = require("../../utils/formatMail");
 const genOTP = require("../../utils/genOTP");
 const genAccountNumber = require("../../utils/genAccountNumber");
+const { encrypt } = require("../../utils/encryption");
 
 const createAccount = asyncHandler(async (req, res, next) => {
   const { body } = req;
@@ -21,15 +23,14 @@ const createAccount = asyncHandler(async (req, res, next) => {
   if (
     !validator.isStrongPassword(body.password, {
       minLength: 8,
-      minLowercase: 1,
-      minUppercase: 1,
-      minNumbers: 1,
-      minSymbols: 1,
+      // minLowercase: 1,
+      // minUppercase: 1,
+      // minNumbers: 1,
+      // minSymbols: 1,
     })
   )
     throw {
-      password:
-        "Minimum length of 8, at least 1 lowercase, 1 uppercase, 1 number and 1 symbol ",
+      password: "Minimum length of 8 characters ",
     };
   if (body.password !== body.re_password)
     throw {
@@ -43,7 +44,7 @@ const createAccount = asyncHandler(async (req, res, next) => {
 
   if (req.file) {
     console.log(req.file);
-    body.avatar = process.env.SERVER_URL + "/avatar" + req.file.filename;
+    body.avatar = process.env.SERVER_URL + "/avatar/" + req.file.filename;
   }
   body.account_number = await genAccountNumber();
   const newUser = await createUser(body);
@@ -96,17 +97,29 @@ const getOTP = asyncHandler(async (req, res, next) => {
   await sendMail({
     to: req.user.email,
     html: `
-      <h1>You have requested a transaction</h1>
+      <h1>Hello! Here is an OTP for Your request!</h1>
       <p><strong>OTP</strong>: ${otp}</p>
       <br>
       <br>
-      <span>Please ignore if you did not initiate any transaction</span>
+      <span>Please ignore if this is sudden to you</span>
+      <p>&copy;The Paramount Bank</p>
   `,
   });
   res.status(200).json({ otp });
+});
+
+const changePassword = asyncHandler(async (req, res, next) => {
+  const { password, email } = req.body;
+  const hashed = encrypt(password);
+  res
+    .status(200)
+    .json(
+      await UpdateUserDetail({ password: hashed }, email || req.user.email)
+    );
 });
 module.exports = {
   login,
   createAccount,
   getOTP,
+  changePassword,
 };

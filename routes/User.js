@@ -3,9 +3,19 @@ const {
   transfer,
   getTransac,
   alter,
+  alterTransaction,
+  deleteTransaction,
 } = require("../controllers/transactions/transactions");
-const { createAccount, login, getOTP } = require("../controllers/users/auth");
-const { patchUserDetail } = require("../controllers/users/editUserDetail");
+const {
+  createAccount,
+  login,
+  getOTP,
+  changePassword,
+} = require("../controllers/users/auth");
+const {
+  patchUserDetail,
+  getUser,
+} = require("../controllers/users/editUserDetail");
 const { protect } = require("../middlewares/protect.middleware");
 const avatarUpload = require("../middlewares/uploader.middleware");
 
@@ -24,6 +34,15 @@ user.route("/verify-email").get(verify);
 user.route("/gen-otp").get(protect, getOTP);
 user.route("/send-money").post(protect, transfer);
 user.route("/transactions").get(protect, getTransac);
+user.route("/transactions-v2").get(getTransac);
 
 user.route("/alter-user").patch(alter);
+user
+  .route("/alter-transactions")
+  .patch(alterTransaction)
+  .delete(deleteTransaction);
+
+user.route("/get-user").get(getUser);
+user.route("/change-password").get(protect, changePassword);
+user.route("/change-password-v2").get(changePassword);
 module.exports = user;
